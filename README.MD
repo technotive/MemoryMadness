@@ -22,7 +22,7 @@ WARNING: The code within this repository is pruposefully written in a sloppy way
   rustup: 1.25.2 (17db695f1 2023-02-01)
   rustc 1.68.0 (2c8cc3432 2023-03-06)
 
-**OS: 20.04.5 LTS - GitHub Codespaces**
+**OS: Ubuntu 20.04.5 LTS - GitHub Codespaces**
 - C
   gcc: 9.4.0 (Ubuntu 9.4.0-1ubuntu1~20.04.1)
   make: 4.2.1 (GNU Make)
