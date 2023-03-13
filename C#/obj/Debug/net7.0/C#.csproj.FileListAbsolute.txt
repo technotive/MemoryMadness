@@ -1,0 +1,15 @@
+/home/nevernown/memory/C#/bin/Debug/net7.0/C#
+/home/nevernown/memory/C#/bin/Debug/net7.0/C#.deps.json
+/home/nevernown/memory/C#/bin/Debug/net7.0/C#.runtimeconfig.json
+/home/nevernown/memory/C#/bin/Debug/net7.0/C#.dll
+/home/nevernown/memory/C#/bin/Debug/net7.0/C#.pdb
+/home/nevernown/memory/C#/obj/Debug/net7.0/C#.csproj.AssemblyReference.cache
+/home/nevernown/memory/C#/obj/Debug/net7.0/C#.GeneratedMSBuildEditorConfig.editorconfig
+/home/nevernown/memory/C#/obj/Debug/net7.0/C#.AssemblyInfoInputs.cache
+/home/nevernown/memory/C#/obj/Debug/net7.0/C#.AssemblyInfo.cs
+/home/nevernown/memory/C#/obj/Debug/net7.0/C#.csproj.CoreCompileInputs.cache
+/home/nevernown/memory/C#/obj/Debug/net7.0/C#.dll
+/home/nevernown/memory/C#/obj/Debug/net7.0/refint/C#.dll
+/home/nevernown/memory/C#/obj/Debug/net7.0/C#.pdb
+/home/nevernown/memory/C#/obj/Debug/net7.0/C#.genruntimeconfig.cache
+/home/nevernown/memory/C#/obj/Debug/net7.0/ref/C#.dll
