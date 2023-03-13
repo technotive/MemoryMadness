@@ -19,11 +19,14 @@ while (listening) {
     var handler = await listener.AcceptAsync();
     Console.WriteLine($"Client {handler.RemoteEndPoint} connected");
     var connected = true;
+    Console.ForegroundColor = ConsoleColor.Blue; // Just to prettify
     while(connected) {
         var byte_count = await handler.ReceiveAsync(buffer, SocketFlags.None);
         var response = Encoding.UTF8.GetString(buffer, 0, byte_count); // Memory management: my buffer is filled from 0 through byte_count and I want it as a UTF-8 string.
         Console.WriteLine(response);
-        connected = byte_count > 0;
+        connected = byte_count > 0; // Sloppy, but unavoidable for control flow & state management
+        // Console.WriteLine("-- CHUNK --");
     }
+    Console.ForegroundColor = ConsoleColor.White; // Just to prettify
     Console.WriteLine($"Client {handler.RemoteEndPoint} disconnected");
 }
