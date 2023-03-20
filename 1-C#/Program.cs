@@ -7,7 +7,7 @@ const int MAX_CONNECTIONS_PENDING = 8;
 const int PORT = 9001;
 var endpoint = new IPEndPoint(IPAddress.Any, PORT);
 
-var buffer = new byte[64];
+var buffer = new byte[256];
 
 using Socket listener = new(endpoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
 listener.Bind(endpoint);
@@ -17,16 +17,33 @@ Console.WriteLine($"Listening on port {PORT} on any interface.");
 var listening = true;
 while (listening) {
     var handler = await listener.AcceptAsync();
+
+    Console.ForegroundColor = ConsoleColor.Green;
     Console.WriteLine($"Client {handler.RemoteEndPoint} connected");
+    Console.ForegroundColor = ConsoleColor.Blue;
+    
     var connected = true;
-    Console.ForegroundColor = ConsoleColor.Blue; // Just to prettify
     while(connected) {
-        var byte_count = await handler.ReceiveAsync(buffer, SocketFlags.None);
-        var response = Encoding.UTF8.GetString(buffer, 0, byte_count); // Memory management: my buffer is filled from 0 through byte_count and I want it as a UTF-8 string.
-        Console.WriteLine(response);
-        connected = byte_count > 0; // Sloppy, but unavoidable for control flow & state management
-        // Console.WriteLine("-- CHUNK --");
+        var byteCount = await handler.ReceiveAsync(buffer, SocketFlags.None);
+        var response = Encoding.UTF8.GetString(buffer, 0, byteCount);
+        Console.WriteLine($"Received {response.Length} bytes\n[{response}]");
+
+        if(byteCount > 0)
+        {
+            var contents = response.Split(':');
+            var text = contents[0];
+            var size = int.Parse(contents[1]);
+            var reply = text.Substring(0, size) + "\n";
+            await handler.SendAsync(Encoding.UTF8.GetBytes(reply));
+        }
+        else
+        {
+            connected = false;
+        }
     }
-    Console.ForegroundColor = ConsoleColor.White; // Just to prettify
-    Console.WriteLine($"Client {handler.RemoteEndPoint} disconnected");
+
+    Console.ForegroundColor = ConsoleColor.Red;
+    Console.WriteLine($"\nClient {handler.RemoteEndPoint} disconnected");
+    handler.Close();
+    Console.ForegroundColor = ConsoleColor.White;
 }
