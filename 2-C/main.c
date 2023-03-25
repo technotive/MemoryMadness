@@ -14,7 +14,6 @@
 #define PORT 9001
 
 int main() {
-    // Similar to C# IPEndPoint
     struct sockaddr_in endpoint;
     endpoint.sin_family = AF_INET; // IPv4
     endpoint.sin_addr.s_addr = INADDR_ANY; // All network interfaces
@@ -23,18 +22,13 @@ int main() {
 
     uint8_t buffer[256] = {0};
 
-    // Similar to C# `Socket listener`
-    int listener    = socket(AF_INET,  SOCK_STREAM, 0); // Options roughly mean: IPv4 TCP/IP
-    int binding_res = bind(listener, (struct sockaddr*)&endpoint, endpoint_size);
+    int listener       = socket(AF_INET,  SOCK_STREAM, 0); // Options roughly mean: IPv4 TCP/IP
+    int binding_result = bind(listener, (struct sockaddr*)&endpoint, endpoint_size);
 
     // Ideally you would check if binding worked. C# would throw an exception. C gives you a return code.
-    if(binding_res < 0) {
-        printf("Could not bind listener to port %d", PORT);
-        exit(BIND_FAIL);
-    }
+    if(binding_result < 0) { printf("Could not bind listener to port %d", PORT); exit(BIND_FAIL); }
 
-    // Similar to C# listener.Listen(MAX_CONNECTIONS_PENDING)
-    int listening_res = listen(listener, MAX_CONNECTIONS_PENDING);
+    int listening_result = listen(listener, MAX_CONNECTIONS_PENDING);
 
     bool listening = true;
     while(listening) {
