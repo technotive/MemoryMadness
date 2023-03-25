@@ -1,4 +1,5 @@
-﻿// This code is based on Microsoft's socket example code @ https://learn.microsoft.com/en-us/dotnet/fundamentals/networking/sockets/socket-services
+﻿// This code is based on Microsoft's socket example code:
+// https://learn.microsoft.com/en-us/dotnet/fundamentals/networking/sockets/socket-services
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -15,7 +16,8 @@ listener.Listen(MAX_CONNECTIONS_PENDING);
 Console.WriteLine($"Listening on port {PORT} on any interface.");
 
 var listening = true;
-while (listening) {
+while (listening)
+{
     var handler = await listener.AcceptAsync();
 
     Console.ForegroundColor = ConsoleColor.Green;
@@ -23,13 +25,14 @@ while (listening) {
     Console.ForegroundColor = ConsoleColor.Blue;
     
     var connected = true;
-    while(connected) {
+    while(connected)
+    {
         var byteCount = await handler.ReceiveAsync(buffer, SocketFlags.None);
         var response = Encoding.UTF8.GetString(buffer, 0, byteCount);
-        Console.WriteLine($"Received {response.Length} bytes\n[{response}]");
 
         if(byteCount > 0)
         {
+            Console.WriteLine($"\nReceived {response.Length} bytes\n{response}");
             var contents = response.Split(':');
             var text = contents[0];
             var size = int.Parse(contents[1]);
@@ -38,6 +41,7 @@ while (listening) {
         }
         else
         {
+            Console.WriteLine($"Received nothing\n");
             connected = false;
         }
     }
