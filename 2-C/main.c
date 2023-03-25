@@ -16,13 +16,13 @@
 int main() {
     struct sockaddr_in endpoint;
     endpoint.sin_family = AF_INET; // IPv4
-    endpoint.sin_addr.s_addr = INADDR_ANY; // All network interfaces
-    endpoint.sin_port = htons(PORT); // Listen at port 9001
+    endpoint.sin_addr.s_addr = INADDR_ANY;
+    endpoint.sin_port = htons(PORT);
     int endpoint_size = sizeof(endpoint);
 
     uint8_t buffer[256] = {0};
 
-    int listener       = socket(AF_INET,  SOCK_STREAM, 0); // Options roughly mean: IPv4 TCP/IP
+    int listener       = socket(AF_INET, SOCK_STREAM, 0); // Options roughly mean: IPv4 TCP/IP
     int binding_result = bind(listener, (struct sockaddr*)&endpoint, endpoint_size);
 
     // Ideally you would check if binding worked. C# would throw an exception. C gives you a return code.
