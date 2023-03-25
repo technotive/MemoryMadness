@@ -5,11 +5,11 @@ WARNING: The code within this repository is pruposefully written in a sloppy way
 
 # Toolchain
 **OS: Debian 10 - WSL2**
+- C#
+  - dotnet SDK: 7.0.201
 - C
   - gcc: 8.3.0 (Debian 8.3.0-6)
   - make: 4.2.1 (GNU Make)
-- C#
-  - dotnet SDK: 7.0.201
 - JS
   - node: 18.15.0
   - npm: 9.5.0
@@ -23,11 +23,11 @@ WARNING: The code within this repository is pruposefully written in a sloppy way
   - rustc 1.68.0 (2c8cc3432 2023-03-06)
 
 **OS: Ubuntu 20.04.5 LTS - GitHub Codespaces**
+- C#
+  - dotnet SDK: 7.0.102
 - C
   - gcc: 9.4.0 (Ubuntu 9.4.0-1ubuntu1~20.04.1)
   - make: 4.2.1 (GNU Make)
-- C#
-  - dotnet SDK: 7.0.102
 - JS
   - node: 19.5.0
   - npm: 9.3.1
