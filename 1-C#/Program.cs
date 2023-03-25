@@ -41,7 +41,7 @@ while (listening)
         }
         else
         {
-            Console.WriteLine($"Received nothing\n");
+            Console.WriteLine($"\nReceived nothing\n");
             connected = false;
         }
     }
