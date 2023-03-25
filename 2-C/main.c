@@ -38,7 +38,6 @@ int main() {
         printf("Client connected\n");
         printf("%s", ANSI_COLOR_BLUE);
 
-
         bool connected = true;
         while(connected) {
             int bytecount = read(handler, buffer, 256);
