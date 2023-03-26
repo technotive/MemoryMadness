@@ -5,6 +5,7 @@ import Network.Socket.ByteString
 import qualified Data.ByteString as Bytes
 import Data.ByteString.UTF8 as UTF8 hiding (take)
 import Data.Char
+import Control.Monad
 
 maxConnectionsPending :: Int
 maxConnectionsPending = 8
@@ -18,44 +19,67 @@ main = do
     bind endpoint (SockAddrInet port Helper.inAddrAny)
     listen endpoint maxConnectionsPending
     putStrLn $ "Listening on port " ++ show port ++ " on any interface."
-    listen' endpoint
-    putStrLn "Done"
+    listenForConnectionsOn endpoint
 
-listen' :: Socket -> IO ()
-listen' endpoint = do
+listenForConnectionsOn :: Socket -> IO ()
+listenForConnectionsOn endpoint = forever $ do
     (handler, info) <- accept endpoint
     putStrLn Helper.green
     putStrLn $ "Client " ++ Helper.clientName info ++ " connected"
     putStrLn Helper.blue
-    connected handler
+    receiveDataOn handler
     putStrLn Helper.red
     putStrLn $ "Client " ++ Helper.clientName info ++ " disconnected"
     putStrLn Helper.reset
-    listen' endpoint
 
-connected :: Socket -> IO ()
-connected handler = do
+receiveDataOn :: Socket -> IO ()
+receiveDataOn handler = do
     request <- recv handler 256
-    onRequest request handler
+    log request
+    let response = processRequest request
+        nextAction = decideNextAction request
+    nextAction handler
 
-onRequest :: Bytes.ByteString -> Socket -> IO()
-onRequest request handler 
-    | byteCount > 0 = do
-        putStrLn $ "Received " ++ show byteCount ++ " bytes\n" ++ request'
-        respond request' handler
-    | otherwise     = close handler
+log :: Bytes.ByteString -> IO ()
+log request
+    | byteCount > 0 = putStrLn $ "\nReceived " ++ show byteCount ++ " bytes\n" ++ show request
+    | otherwise     = putStrLn "\nReceived nothing."
     where byteCount = Bytes.length request
-          request'  = UTF8.toString request
 
-respond :: String -> Socket -> IO ()
-respond request handler = do
-    send handler (responseFrom contents0 contents1)
-    connected handler
-    where contents0 = takeWhile isAlpha request
-          contents1 = takeWhile isDigit $ dropWhile (not . isDigit) request
-
-responseFrom :: String -> String -> ByteString
-responseFrom text size
+processRequest :: Bytes.ByteString -> Bytes.ByteString
+processRequest request
     | size == [] = UTF8.fromString "\n"
     | otherwise  = UTF8.fromString $ take n text ++ "\n"
-    where n = read size
+    where n    = read size
+          text = takeWhile isAlpha req'
+          size = takeWhile isDigit $ dropWhile (not . isDigit) req'
+          req' = UTF8.toString request
+
+decideNextAction :: Bytes.ByteString -> (Socket -> IO ())
+decideNextAction request
+    | byteCount > 0 = receiveDataOn
+    | otherwise     = close
+    where byteCount = Bytes.length request
+
+
+-- onRequest :: Bytes.ByteString -> Socket -> IO ()
+-- onRequest request handler 
+--     | byteCount > 0 = do
+--         putStrLn $ "Received " ++ show byteCount ++ " bytes\n" ++ request'
+--         respond request' handler
+--     | otherwise     = close handler
+--     where byteCount = Bytes.length request
+--           request'  = UTF8.toString request
+
+-- respond :: String -> Socket -> IO ()
+-- respond request handler = do
+--     send handler (responseFrom request)
+--     receiveDataOn handler
+
+-- responseFrom :: String -> ByteString
+-- responseFrom request
+--     | size == [] = UTF8.fromString "\n"
+--     | otherwise  = UTF8.fromString $ take n text ++ "\n"
+--     where n = read size
+--           text = takeWhile isAlpha request
+--           size = takeWhile isDigit $ dropWhile (not . isDigit) request
