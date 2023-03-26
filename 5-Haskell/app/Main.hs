@@ -1,5 +1,5 @@
 module Main where
-import Helper
+import Helper -- See Helper.hs for more information as well
 import Network.Socket
 import Network.Socket.ByteString
 import qualified Data.ByteString as Bytes
@@ -11,15 +11,6 @@ maxConnectionsPending = 8
 
 port :: PortNumber
 port = 9001
-
--- Haskell reads in a very different way, NOTE:
--- You can roughly think of the `<-` directive as "await" and `IO ()` as "async void"
--- You can think of `$` as 
---   "first calculate everything right of $ then input the result into the function left of $"
---   This is actually exactly the same thing as using parenthesis () on the entrire right-hand side.
--- You can think of `.` as 
---   "make a new function which first does the thing to the right of . and then the thing to the left of ."
---   The official term for this directive is "Composition", mathematically speaking: (f . g) n == f(g(n))
 
 main :: IO ()
 main = do
