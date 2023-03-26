@@ -3,6 +3,8 @@ import Helper
 import Network.Socket
 import Network.Socket.ByteString
 import qualified Data.ByteString as Bytes
+import Data.ByteString.UTF8 as UTF8 hiding (take)
+import Data.Char
 
 maxConnectionsPending :: Int
 maxConnectionsPending = 8
@@ -11,9 +13,11 @@ port :: PortNumber
 port = 9001
 
 -- Haskell reads in a very different way, NOTE:
--- You can roughly think of the `<-` directive as "await" and IO () as "async void"
--- You can think of `$` as "first calculate everything right of $ then input the result into the function left of $"
--- You can think of `.` as "use the output of the function on the right as input for the function on the left"
+-- You can roughly think of the `<-` directive as "await" and `IO ()` as "async void"
+-- You can think of `$` as 
+--   "first calculate everything right of $ then input the result into the function left of $"
+-- You can think of `.` as 
+--   "make a new function which first does the thing to the right of . and then the thing to the left of ."
 
 main :: IO ()
 main = do
@@ -30,22 +34,35 @@ listen' endpoint = do
     putStrLn Helper.green
     putStrLn $ "Client " ++ Helper.clientName info ++ " connected"
     putStrLn Helper.blue
-    onData' handler
+    connected handler
     putStrLn Helper.red
     putStrLn $ "Client " ++ Helper.clientName info ++ " disconnected"
     putStrLn Helper.reset
     listen' endpoint
 
-onData' :: Socket -> IO ()
-onData' handler = do
+connected :: Socket -> IO ()
+connected handler = do
     request <- recv handler 256
-    onRequest' request handler
+    onRequest request handler
 
-onRequest' :: Bytes.ByteString -> Socket -> IO()
-onRequest' request handler 
-    | byteCount == 0 = close handler
-    | otherwise      = do 
-        putStrLn $ "Received " ++ show byteCount ++ " bytes\n" ++ show request
-        onData' handler
+onRequest :: Bytes.ByteString -> Socket -> IO()
+onRequest request handler 
+    | byteCount > 0 = do
+        putStrLn $ "Received " ++ show byteCount ++ " bytes\n" ++ request'
+        respond request' handler
+    | otherwise     = close handler
     where byteCount = Bytes.length request
+          request'  = UTF8.toString request
 
+respond :: String -> Socket -> IO ()
+respond request handler = do
+    send handler (responseFrom contents0 contents1)
+    connected handler
+    where contents0 = takeWhile isAlpha request
+          contents1 = takeWhile isDigit $ dropWhile (not . isDigit) request
+
+responseFrom :: String -> String -> ByteString
+responseFrom text size
+    | size == [] = UTF8.fromString "\n"
+    | otherwise  = UTF8.fromString $ take n text ++ "\n"
+    where n = read size
