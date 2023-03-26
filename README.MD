@@ -1,7 +1,7 @@
 # Readme file for Memory Madness
 This is an example project to demonstrate things that can go wrong with memory management in several languages. This repository is a work in progress meant for educational purposes.
 
-WARNING: The code within this repository is pruposefully written in a sloppy way and should never be used in any production system.
+WARNING: The code within this repository is purposefully written in a sloppy way and should never be used in any production system.
 
 # Toolchain
 **OS: Debian 10 - WSL2**
