@@ -13,6 +13,7 @@
 #define MY_MAIN
 
 #include <string.h>
+#include <arpa/inet.h>
 
 #define ANSI_COLOR_RED     "\x1b[31m"
 #define ANSI_COLOR_GREEN   "\x1b[32m"
@@ -34,6 +35,13 @@ void split(unsigned char* source, int s_size, unsigned char* left, unsigned char
     memcpy(left, source, location);
     unsigned char* next = source+location+1;
     memcpy(right, next, ending-location);
+}
+
+void client_name(int handler, unsigned char* address) {
+    struct sockaddr_in client;
+    unsigned int client_size = sizeof(client);
+    getpeername(handler, (struct sockaddr*) &client, &client_size);
+    memcpy(address, inet_ntoa(client.sin_addr), 16);
 }
 
 #endif

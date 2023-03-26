@@ -26,7 +26,7 @@ int main() {
     int binding_result = bind(listener, (struct sockaddr*)&endpoint, endpoint_size);
 
     // Ideally you would check if binding worked. C# would throw an exception. C gives you a return code.
-    if(binding_result < 0) { printf("Could not bind listener to port %d", PORT); exit(BIND_FAIL); }
+    if(binding_result < 0) { printf("Could not bind listener to port %d\n", PORT); exit(BIND_FAIL); }
 
     int listening_result = listen(listener, MAX_CONNECTIONS_PENDING);
 
@@ -34,8 +34,11 @@ int main() {
     while(listening) {
         int handler = accept(listener, (struct sockaddr*)&endpoint, (socklen_t*)&endpoint_size);
 
+        unsigned char client_addr[16] = {0};
+        client_name(handler, client_addr);
+        
         printf("%s", ANSI_COLOR_GREEN);
-        printf("Client connected\n");
+        printf("Client %s connected\n", client_addr);
         printf("%s", ANSI_COLOR_BLUE);
 
         bool connected = true;
@@ -57,7 +60,7 @@ int main() {
         }
 
         printf("%s", ANSI_COLOR_RED);
-        printf("Client disconnected\n");
+        printf("Client %s disconnected\n", client_addr);
         close(handler);
         printf("%s", ANSI_COLOR_RESET);
     }
