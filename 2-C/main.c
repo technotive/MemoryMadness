@@ -29,6 +29,7 @@ int main() {
     if(binding_result < 0) { printf("Could not bind listener to port %d\n", PORT); exit(BIND_FAIL); }
 
     int listening_result = listen(listener, MAX_CONNECTIONS_PENDING);
+    printf("Listening on port %d on any interface.", PORT);
 
     bool listening = true;
     while(listening) {
@@ -36,7 +37,7 @@ int main() {
 
         unsigned char client_addr[16] = {0};
         client_name(handler, client_addr);
-        
+
         printf("%s", ANSI_COLOR_GREEN);
         printf("Client %s connected\n", client_addr);
         printf("%s", ANSI_COLOR_BLUE);

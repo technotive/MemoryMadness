@@ -28,16 +28,16 @@ while (listening)
     while(connected)
     {
         var byteCount = await handler.ReceiveAsync(buffer, SocketFlags.None);
-        var response = Encoding.UTF8.GetString(buffer, 0, byteCount);
+        var request = Encoding.UTF8.GetString(buffer, 0, byteCount);
 
         if(byteCount > 0)
         {
-            Console.WriteLine($"\nReceived {response.Length} bytes\n{response}");
-            var contents = response.Split(':');
+            Console.WriteLine($"\nReceived {request.Length} bytes\n{request}");
+            var contents = request.Split(':');
             var text = contents[0];
             var size = int.Parse(contents[1]);
-            var reply = text.Substring(0, size) + "\n";
-            await handler.SendAsync(Encoding.UTF8.GetBytes(reply));
+            var response = text.Substring(0, size) + "\n";
+            await handler.SendAsync(Encoding.UTF8.GetBytes(response));
         }
         else
         {

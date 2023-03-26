@@ -1,5 +1,5 @@
 const net = require('node:net')
-const header = require('./header')
+const helper = require('./helper')
 
 const PORT = 9001
 
@@ -10,22 +10,22 @@ listener.listen(PORT, '127.0.0.1', () => {
 
 
 function listening(handler) {
-    console.log(header.color.green)
+    console.log(helper.color.green)
     console.log(`Client ${handler.remoteAddress} connected`)
-    console.log(header.color.blue)
+    console.log(helper.color.blue)
 
     handler.on("data", (data) => {
-        let response = data.toString()
-        console.log(`Received ${response.length} bytes\n${response}`)
-        let contents = response.split(':')
+        let request = data.toString()
+        console.log(`Received ${request.length} bytes\n${request}`)
+        let contents = request.split(':')
         let size = parseInt(contents[1])
-        let reply = contents[0].substring(0, size) + '\n'
-        handler.write(reply)
+        let response = contents[0].substring(0, size) + '\n'
+        handler.write(response)
     })
 
     handler.on("end", () => {
-        console.log(header.color.red)
+        console.log(helper.color.red)
         console.log(`Client ${handler.remoteAddress} disconnected`)
-        console.log(header.color.reset)
+        console.log(helper.color.reset)
     })
 }
