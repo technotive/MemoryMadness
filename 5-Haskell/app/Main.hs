@@ -15,10 +15,10 @@ port = 9001
 main :: IO ()
 main = do
     endpoint <- socket AF_INET Stream 0
-    _ <- bind endpoint (SockAddrInet port Helper.inAddrAny)
-    _ <- listen endpoint maxConnectionsPending
+    bind endpoint (SockAddrInet port Helper.inAddrAny)
+    listen endpoint maxConnectionsPending
     putStrLn $ "Listening on port " ++ show port ++ " on any interface."
-    _ <- listen' endpoint
+    listen' endpoint
     putStrLn "Done"
 
 listen' :: Socket -> IO ()
