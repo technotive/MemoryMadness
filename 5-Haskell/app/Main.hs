@@ -60,26 +60,3 @@ decideNextAction request
     | byteCount > 0 = receiveDataOn
     | otherwise     = close
     where byteCount = Bytes.length request
-
-
--- onRequest :: Bytes.ByteString -> Socket -> IO ()
--- onRequest request handler 
---     | byteCount > 0 = do
---         putStrLn $ "Received " ++ show byteCount ++ " bytes\n" ++ request'
---         respond request' handler
---     | otherwise     = close handler
---     where byteCount = Bytes.length request
---           request'  = UTF8.toString request
-
--- respond :: String -> Socket -> IO ()
--- respond request handler = do
---     send handler (responseFrom request)
---     receiveDataOn handler
-
--- responseFrom :: String -> ByteString
--- responseFrom request
---     | size == [] = UTF8.fromString "\n"
---     | otherwise  = UTF8.fromString $ take n text ++ "\n"
---     where n = read size
---           text = takeWhile isAlpha request
---           size = takeWhile isDigit $ dropWhile (not . isDigit) request
