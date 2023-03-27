@@ -3,6 +3,7 @@ import Network.Socket
 
 -- Haskell reads in a very different way, NOTE:
 -- You can roughly think of the `<-` directive as "await" and `IO ()` as "async void"
+--   (Although that is not exactly what is going on)
 -- You can think of `$` as 
 --   "first calculate everything right of $ then input the result into the function left of $"
 --   This is actually exactly the same thing as using parenthesis () on the entrire right-hand side.
