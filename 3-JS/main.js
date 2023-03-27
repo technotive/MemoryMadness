@@ -1,3 +1,6 @@
+// Based on the Node JS documentation for the net class:
+// https://nodejs.org/api/net.html
+
 const net = require('node:net')
 const helper = require('./helper')
 

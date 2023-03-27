@@ -1,3 +1,6 @@
+-- Based on hoogle.haskell.org/ library lookups.
+-- Examples online are outdated, but you can do a lot by looking at function types.
+
 module Main where
 import Helper -- See Helper.hs for more information as well
 import Network.Socket
