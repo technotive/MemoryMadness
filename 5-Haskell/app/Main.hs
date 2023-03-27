@@ -30,21 +30,22 @@ listenForConnectionsOn endpoint = forever $ do
     putStrLn Helper.green
     putStrLn $ "Client " ++ Helper.clientName info ++ " connected"
     putStrLn Helper.blue
-    receiveDataOn handler
+    communicate handler
     putStrLn Helper.red
     putStrLn $ "Client " ++ Helper.clientName info ++ " disconnected"
     putStrLn Helper.reset
 
-receiveDataOn :: Socket -> IO ()
-receiveDataOn handler = do
+communicate :: Socket -> IO ()
+communicate handler = do
     request <- recv handler 256
-    log request
+    log' request
     let response = processRequest request
         nextAction = decideNextAction request
+    send handler response
     nextAction handler
 
-log :: Bytes.ByteString -> IO ()
-log request
+log' :: Bytes.ByteString -> IO ()
+log' request
     | byteCount > 0 = putStrLn $ "\nReceived " ++ show byteCount ++ " bytes\n" ++ show request
     | otherwise     = putStrLn "\nReceived nothing."
     where byteCount = Bytes.length request
@@ -60,6 +61,6 @@ processRequest request
 
 decideNextAction :: Bytes.ByteString -> (Socket -> IO ())
 decideNextAction request
-    | byteCount > 0 = receiveDataOn
+    | byteCount > 0 = communicate
     | otherwise     = close
     where byteCount = Bytes.length request
