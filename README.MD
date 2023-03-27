@@ -39,3 +39,10 @@ WARNING: The code within this repository is purposefully written in a sloppy way
 - Rust
   - rustup: 1.25.2 (17db695f1 2023-02-01)
   - rustc rustc 1.67.1 (d5a82bbd2 2023-02-07)
+
+# Pseudo code
+- Listen on port 9001 on any interface
+  - receive a request, expecting `{word}:{word_size}`
+  - log the request
+  - take `word_size` characters from `word`
+  - send the resulting string back to the client
