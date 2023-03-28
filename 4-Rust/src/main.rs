@@ -32,7 +32,7 @@ fn listening(listener: &TcpListener) {
         print!("{}", ANSI_COLOR_BLUE);
         communicate(&mut stream);
         print!("{}", ANSI_COLOR_RED);
-        println!("Client {} connected", info.ip());
+        println!("Client {} disconnected", info.ip());
         print!("{}", ANSI_COLOR_RESET);
     } else {
         println!("Client connection failed");

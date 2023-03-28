@@ -17,7 +17,7 @@ WARNING: The code within this repository is purposefully written in a sloppy way
   - ghcup: 0.1.19.2
   - ghc: 9.2.5
   - cabal: 3.6.2.0
-  - hls: 1.9.0.0
+  - hls: 1.9.1.0
 - Rust
   - rustup: 1.25.2 (17db695f1 2023-02-01)
   - rustc 1.68.0 (2c8cc3432 2023-03-06)
@@ -35,7 +35,7 @@ WARNING: The code within this repository is purposefully written in a sloppy way
   - ghcup: 0.1.19.2
   - ghc: 9.2.5
   - cabal: 3.6.2.0
-  - hls: 1.9.1.0
+  - hls: 1.9.0.0
 - Rust
   - rustup: 1.25.2 (17db695f1 2023-02-01)
   - rustc rustc 1.67.1 (d5a82bbd2 2023-02-07)

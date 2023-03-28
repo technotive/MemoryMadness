@@ -6,29 +6,27 @@ const helper = require('./helper')
 
 const PORT = 9001
 
-let listener = new net.Server(listening)
+let listener = new net.Server(onConnection)
 listener.listen(PORT, '127.0.0.1', () => {
     console.log(`Listening on port ${PORT} on any interface.`)
 })
 
 
-function listening(handler) {
-    console.log(helper.color.green)
-    console.log(`Client ${handler.remoteAddress} connected`)
-    console.log(helper.color.blue)
+function onConnection(handler) {
+    helper.logConnected(handler.remoteAddress)
 
     handler.on("data", (data) => {
-        let request = data.toString()
-        console.log(`Received ${request.length} bytes\n${request}`)
-        let contents = request.split(':')
-        let size = parseInt(contents[1])
-        let response = contents[0].substring(0, size) + '\n'
+        helper.logRequest(data);
+        let response = processRequest(data)
         handler.write(response)
     })
 
-    handler.on("end", () => {
-        console.log(helper.color.red)
-        console.log(`Client ${handler.remoteAddress} disconnected`)
-        console.log(helper.color.reset)
-    })
+    handler.on("end", () => helper.logDisonnected(handler.remoteAddress))
+}
+
+function processRequest(data) {
+    let request = data.toString()
+    let contents = request.split(':')
+    let size = parseInt(contents[1])
+    return contents[0].substring(0, size) + '\n'
 }
