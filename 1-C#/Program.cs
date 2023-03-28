@@ -3,12 +3,12 @@
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using Helper;
 
 const int MAX_CONNECTIONS_PENDING = 8;
 const int PORT = 9001;
-var endpoint = new IPEndPoint(IPAddress.Any, PORT);
 
-var buffer = new byte[256];
+var endpoint = new IPEndPoint(IPAddress.Any, PORT);
 
 using Socket listener = new(endpoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
 listener.Bind(endpoint);
@@ -19,35 +19,34 @@ var listening = true;
 while (listening)
 {
     var handler = await listener.AcceptAsync();
-
-    Console.ForegroundColor = ConsoleColor.Green;
-    Console.WriteLine($"Client {handler.RemoteEndPoint} connected");
-    Console.ForegroundColor = ConsoleColor.Blue;
+    Helper.Logger.LogConnected(handler.RemoteEndPoint);
     
     var connected = true;
     while(connected)
     {
+        var buffer = new byte[256];
         var byteCount = await handler.ReceiveAsync(buffer, SocketFlags.None);
-        var request = Encoding.UTF8.GetString(buffer, 0, byteCount);
-
         if(byteCount > 0)
         {
-            Console.WriteLine($"\nReceived {request.Length} bytes\n{request}");
-            var contents = request.Split(':');
-            var text = contents[0];
-            var size = int.Parse(contents[1]);
-            var response = text.Substring(0, size) + "\n";
-            await handler.SendAsync(Encoding.UTF8.GetBytes(response));
+            Helper.Logger.LogRequest(buffer, byteCount);
+            var response = processRequest(buffer, byteCount);
+            await handler.SendAsync(response);
         }
         else
         {
-            Console.WriteLine($"\nReceived nothing\n");
             connected = false;
         }
     }
 
-    Console.ForegroundColor = ConsoleColor.Red;
-    Console.WriteLine($"\nClient {handler.RemoteEndPoint} disconnected");
+    Helper.Logger.LogDisonnected(handler.RemoteEndPoint);
     handler.Close();
-    Console.ForegroundColor = ConsoleColor.White;
+}
+
+byte[] processRequest(byte[] buffer, int length) {
+    var request = Encoding.UTF8.GetString(buffer, 0, length);
+    var contents = request.Split(':');
+    var text = contents[0];
+    var size = int.Parse(contents[1]);
+    var response = text.Substring(0, size) + "\n";
+    return Encoding.UTF8.GetBytes(response);
 }
