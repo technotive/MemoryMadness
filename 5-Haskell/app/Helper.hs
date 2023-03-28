@@ -26,5 +26,5 @@ blue  = "\x1b[34m"
 reset :: String
 reset = "\x1b[0m"
 
-clientName :: SockAddr -> String
-clientName = takeWhile (/= ':') . show
+clientIp :: SockAddr -> String
+clientIp = takeWhile (/= ':') . show

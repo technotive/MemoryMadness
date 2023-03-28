@@ -28,11 +28,11 @@ listenForConnectionsOn :: Socket -> IO ()
 listenForConnectionsOn endpoint = forever $ do
     (handler, info) <- accept endpoint
     putStrLn Helper.green
-    putStrLn $ "Client " ++ Helper.clientName info ++ " connected"
+    putStrLn $ "Client " ++ Helper.clientIp info ++ " connected"
     putStrLn Helper.blue
     communicate handler
     putStrLn Helper.red
-    putStrLn $ "Client " ++ Helper.clientName info ++ " disconnected"
+    putStrLn $ "Client " ++ Helper.clientIp info ++ " disconnected"
     putStrLn Helper.reset
 
 communicate :: Socket -> IO ()
