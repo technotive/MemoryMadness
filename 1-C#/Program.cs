@@ -3,7 +3,6 @@
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
-using Helper;
 
 const int MAX_CONNECTIONS_PENDING = 8;
 const int PORT = 9001;
@@ -15,34 +14,37 @@ listener.Bind(endpoint);
 listener.Listen(MAX_CONNECTIONS_PENDING);
 Console.WriteLine($"Listening on port {PORT} on any interface.");
 
-var listening = true;
-while (listening)
+while (true)
 {
+    await Listen();
+}
+
+async Task Listen() {
+    var connected = true;
     var handler = await listener.AcceptAsync();
     Helper.Logger.LogConnected(handler.RemoteEndPoint);
-    
-    var connected = true;
     while(connected)
     {
-        var buffer = new byte[256];
-        var byteCount = await handler.ReceiveAsync(buffer, SocketFlags.None);
-        if(byteCount > 0)
-        {
-            Helper.Logger.LogRequest(buffer, byteCount);
-            var response = processRequest(buffer, byteCount);
-            await handler.SendAsync(response);
-        }
-        else
-        {
-            connected = false;
-        }
+        connected = await Communicate(handler);
     }
-
     Helper.Logger.LogDisonnected(handler.RemoteEndPoint);
     handler.Close();
 }
 
-byte[] processRequest(byte[] buffer, int length) {
+async Task<bool> Communicate(Socket handler) {
+    var buffer = new byte[256];
+    var byteCount = await handler.ReceiveAsync(buffer, SocketFlags.None);
+    if(byteCount == 0) 
+    { 
+        return false;
+    }
+    Helper.Logger.LogRequest(buffer, byteCount);
+    var response = ProcessRequest(buffer, byteCount);
+    await handler.SendAsync(response);
+    return true;
+}
+
+byte[] ProcessRequest(byte[] buffer, int length) {
     var request = Encoding.UTF8.GetString(buffer, 0, length);
     var contents = request.Split(':');
     var text = contents[0];

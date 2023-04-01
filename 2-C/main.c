@@ -9,6 +9,8 @@
 #include <stdbool.h>
 #include <string.h>
 
+bool communicate(int handler);
+void my_listen(int listener, struct sockaddr* endpoint, socklen_t* endpoint_size);
 int processRequest(uint8_t* buffer, int length, uint8_t* output);
 
 #include "helper.h" //See this file for some extra information as well.
@@ -29,34 +31,38 @@ int main() {
     int _b_result = listen(listener, MAX_CONNECTIONS_PENDING);
     printf("Listening on port %d on any interface.\n", PORT);
 
-    bool listening = true;
-    while(listening) {
-        int handler = accept(listener, (struct sockaddr*)&endpoint, (socklen_t*)&endpoint_size);
-        logConnected(handler);
-
-        bool connected = true;
-        while(connected) {
-            uint8_t buffer[256]; // Volatile
-            int byte_count = read(handler, buffer, 256);
-            
-            if(byte_count > 0) {
-                logRequest(buffer, byte_count);
-                uint8_t response[256];
-                int length = processRequest(buffer, byte_count, response);
-                write(handler, response, length);
-            } else {
-                connected = false;
-            }
-        }
-
-        logDisconnected(handler);
-        close(handler);
+    while(true) {
+        my_listen(listener, (struct sockaddr*)&endpoint, (socklen_t*)&endpoint_size);
     }
     shutdown(listener, SHUT_RDWR); // Done automatically in C# by the using directive.
     return 0;
 }
 
- int processRequest(uint8_t* buffer, int length, uint8_t* output) {
+void my_listen(int listener, struct sockaddr* endpoint, socklen_t* endpoint_size) {
+    bool connected = true;
+    int handler = accept(listener, endpoint, endpoint_size);
+    logConnected(handler);
+    while(connected) {
+        connected = communicate(handler);
+    }
+    logDisconnected(handler);
+    close(handler);
+}
+
+bool communicate(int handler) {
+    uint8_t buffer[256]; // Volatile
+    int byte_count = read(handler, buffer, 256);
+    if(byte_count == 0) {
+        return false;
+    }
+    logRequest(buffer, byte_count);
+    uint8_t response[256];
+    int length = processRequest(buffer, byte_count, response);
+    write(handler, response, length);
+    return true;
+}
+
+int processRequest(uint8_t* buffer, int length, uint8_t* output) {
     uint8_t contents_0[256];
     uint8_t contents_1[256];
     split(buffer, length, ':', (uint8_t*) contents_0, (uint8_t*) contents_1);
