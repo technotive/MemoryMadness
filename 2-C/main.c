@@ -11,7 +11,7 @@
 
 bool communicate(int handler);
 void my_listen(int listener, struct sockaddr* endpoint, socklen_t* endpoint_size);
-int processRequest(uint8_t* buffer, int length, uint8_t* output);
+int process_request(uint8_t* buffer, int length, uint8_t* output);
 
 #include "helper.h" //See this file for some extra information as well.
 
@@ -39,13 +39,10 @@ int main() {
 }
 
 void my_listen(int listener, struct sockaddr* endpoint, socklen_t* endpoint_size) {
-    bool connected = true;
     int handler = accept(listener, endpoint, endpoint_size);
-    logConnected(handler);
-    while(connected) {
-        connected = communicate(handler);
-    }
-    logDisconnected(handler);
+    log_connected(handler);
+    while(communicate(handler)) {}
+    log_disconnected(handler);
     close(handler);
 }
 
@@ -55,14 +52,14 @@ bool communicate(int handler) {
     if(byte_count == 0) {
         return false;
     }
-    logRequest(buffer, byte_count);
+    log_request(buffer, byte_count);
     uint8_t response[256];
-    int length = processRequest(buffer, byte_count, response);
+    int length = process_request(buffer, byte_count, response);
     write(handler, response, length);
     return true;
 }
 
-int processRequest(uint8_t* buffer, int length, uint8_t* output) {
+int process_request(uint8_t* buffer, int length, uint8_t* output) {
     uint8_t contents_0[256];
     uint8_t contents_1[256];
     split(buffer, length, ':', (uint8_t*) contents_0, (uint8_t*) contents_1);

@@ -20,13 +20,9 @@ while (true)
 }
 
 async Task MyListen() {
-    var connected = true;
     var handler = await listener.AcceptAsync();
     Helper.Logger.LogConnected(handler.RemoteEndPoint);
-    while(connected)
-    {
-        connected = await Communicate(handler);
-    }
+    while(await Communicate(handler)) {}
     Helper.Logger.LogDisonnected(handler.RemoteEndPoint);
     handler.Close();
 }

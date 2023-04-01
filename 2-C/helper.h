@@ -18,8 +18,8 @@
 #define ANSI_COLOR_RESET   "\x1b[0m"
 
 void split(unsigned char* source, int s_size, char split_at, unsigned char* left, unsigned char* right);
-void logConnected(int handler);
-void logDisconnected(int handler);
-void logRequest(unsigned char* buffer, int length);
+void log_connected(int handler);
+void log_disconnected(int handler);
+void log_request(unsigned char* buffer, int length);
 
 #endif

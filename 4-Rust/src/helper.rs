@@ -22,13 +22,13 @@ pub fn log_connected(info: SocketAddr) {
 
 pub fn log_disconnected(info: SocketAddr) {
     print!("{}", ANSI_COLOR_RED);
-    println!("Client {} connected", info.ip());
+    println!("Client {} disconnected", info.ip());
     print!("{}", ANSI_COLOR_RESET);
 }
 
-pub fn log_request(request: &[u8], length: usize) {
+pub fn log_request(buffer: &[u8], length: usize) {
     print!("{}", ANSI_COLOR_BLUE);
     println!("Received {} bytes", length);
     print!("{}", ANSI_COLOR_RESET);
-    println!("{:?}", request);
+    println!("{:?}", &buffer[..length]);
 }

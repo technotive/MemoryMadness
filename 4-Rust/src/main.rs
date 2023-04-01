@@ -26,40 +26,33 @@ fn main() {
 fn my_listen(listener: &TcpListener) {
     if let Ok((mut stream, info)) = listener.accept() {
         log_connected(info);
-        communicate(&mut stream);
+        while communicate(&mut stream) {}
         log_disconnected(info);
+        if let Err(_) = stream.shutdown(std::net::Shutdown::Both) {
+            println!("Failed to close stream after response");
+        }
     } else {
         println!("Client connection failed");
     }
 }
 
-fn communicate(stream: &mut TcpStream) {
+fn communicate(stream: &mut TcpStream) -> bool {
     let mut buffer = [0;256];
-    let result = stream.read(&mut buffer);
-    if let Ok(byte_count) = result {
-        log_request(&buffer, byte_count);
-        if let Ok(request) = str::from_utf8(&buffer) {
-            let some_contents = request[0..byte_count].split_once(':');
-            if let Some(contents) = some_contents {
-                let some_size = contents.1.trim().parse();
-                if let Ok(size) = some_size {
-                    let mut response = contents.0.chars().take(size).collect::<String>();
-                    response.push('\n');
-                    if let Ok(_) = stream.write(response.as_bytes()) {
-                        // No need to check further
-                    } else {
-                        println!("Could not respond")
-                    }
-                } else {
-                    println!("Could not parse size");
-                }
-            } else {
-                println!("Could not split request");
-            }
-        } else {
-            println!("Could not decode request");
-        }
-    } else {
-        println!("Error while receiving data");
+    let Ok(byte_count) = stream.read(&mut buffer) else { return false; };
+    if byte_count == 0 {
+        return false;
     }
+    log_request(&buffer, byte_count);
+    let Some(response) = process_request(&buffer, byte_count) else { return false; };
+    let Ok(_) = stream.write(response.as_bytes()) else { return false; };
+    return true;
+}
+
+fn process_request(buffer: &[u8], length: usize) -> Option<String> {
+    let Ok(request) = str::from_utf8(&buffer[..length]) else { return None };
+    let Some(contents) = request.split_once(':') else { return None };
+    let Ok(size) = contents.1.trim().parse() else { return None };
+    let mut response = contents.0.chars().take(size).collect::<String>();
+    response.push('\n');
+    return Some(response);
 }

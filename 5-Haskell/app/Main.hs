@@ -21,42 +21,34 @@ port = 9001
 main :: IO ()
 main = do
     endpoint <- socket AF_INET Stream 0
-    bind endpoint (SockAddrInet port Helper.inAddrAny)
+    bind endpoint (SockAddrInet port inAddrAny)
     listen endpoint maxConnectionsPending
     putStrLn $ "Listening on port " ++ show port ++ " on any interface."
-    listenForConnectionsOn endpoint
+    myListen endpoint
 
-listenForConnectionsOn :: Socket -> IO ()
-listenForConnectionsOn endpoint = forever $ do
+myListen :: Socket -> IO ()
+myListen endpoint = forever $ do
     (handler, info) <- accept endpoint
-    putStrLn Helper.green
-    putStrLn $ "Client " ++ Helper.clientIp info ++ " connected"
-    putStrLn Helper.blue
+    logConnected info
     communicate handler
-    putStrLn Helper.red
-    putStrLn $ "Client " ++ Helper.clientIp info ++ " disconnected"
-    putStrLn Helper.reset
+    logDisconnected info
+    close handler
 
 communicate :: Socket -> IO ()
 communicate handler = do
     request <- recv handler 256
-    log' request
-    let response = processRequest request
-        nextAction = decideNextAction request
-    send handler response
-    nextAction handler
-
-log' :: Bytes.ByteString -> IO ()
-log' request
-    | byteCount > 0 = putStrLn $ "\nReceived " ++ show byteCount ++ " bytes\n" ++ show request
-    | otherwise     = putStrLn "\nReceived nothing."
-    where byteCount = Bytes.length request
+    when (Bytes.length request > 0) $ do
+        logRequest request
+        let response = processRequest request
+        send handler response
+        communicate handler
+        
 
 processRequest :: Bytes.ByteString -> Bytes.ByteString
 processRequest request
     | size == [] = UTF8.fromString "\n"
-    | otherwise  = UTF8.fromString $ take n text ++ "\n"
-    where n    = read size
+    | otherwise  = UTF8.fromString $ take len text ++ "\n"
+    where len  = read size
           text = takeWhile isAlpha req'
           size = takeWhile isDigit $ dropWhile (not . isDigit) req'
           req' = UTF8.toString request
