@@ -6,8 +6,29 @@
  * Unlike Haskell, Rust is procedural and we need no `do` statements and weird `IO ()` constructs.
  */
 
+use std::net::SocketAddr;
+
 pub const IN_ADDR_ANY: [u8; 4] = [0, 0, 0, 0];
-pub const ANSI_COLOR_RED   : &str = "\x1b[31m";
-pub const ANSI_COLOR_GREEN : &str = "\x1b[32m";
-pub const ANSI_COLOR_BLUE  : &str = "\x1b[34m";
-pub const ANSI_COLOR_RESET : &str = "\x1b[0m";
+const ANSI_COLOR_RED   : &str = "\x1b[31m";
+const ANSI_COLOR_GREEN : &str = "\x1b[32m";
+const ANSI_COLOR_BLUE  : &str = "\x1b[34m";
+const ANSI_COLOR_RESET : &str = "\x1b[0m";
+
+pub fn log_connected(info: SocketAddr) {
+    print!("{}", ANSI_COLOR_GREEN);
+    println!("Client {} connected", info.ip());
+    print!("{}", ANSI_COLOR_RESET);
+}
+
+pub fn log_disconnected(info: SocketAddr) {
+    print!("{}", ANSI_COLOR_RED);
+    println!("Client {} connected", info.ip());
+    print!("{}", ANSI_COLOR_RESET);
+}
+
+pub fn log_request(request: &[u8], length: usize) {
+    print!("{}", ANSI_COLOR_BLUE);
+    println!("Received {} bytes", length);
+    print!("{}", ANSI_COLOR_RESET);
+    println!("{:?}", request);
+}

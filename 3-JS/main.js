@@ -6,16 +6,16 @@ const helper = require('./helper')
 
 const PORT = 9001
 
-let listener = new net.Server(onConnection)
+let listener = new net.Server(myListen)
 listener.listen(PORT, '127.0.0.1', () => {
     console.log(`Listening on port ${PORT} on any interface.`)
 })
 
 
-function onConnection(handler) {
+function myListen(handler) {
     helper.logConnected(handler.remoteAddress)
 
-    handler.on("data", (data) => {
+    handler.on("data", (data) => { // "communicate"
         helper.logRequest(data);
         let response = processRequest(data)
         handler.write(response)

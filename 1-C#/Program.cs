@@ -16,10 +16,10 @@ Console.WriteLine($"Listening on port {PORT} on any interface.");
 
 while (true)
 {
-    await Listen();
+    await MyListen();
 }
 
-async Task Listen() {
+async Task MyListen() {
     var connected = true;
     var handler = await listener.AcceptAsync();
     Helper.Logger.LogConnected(handler.RemoteEndPoint);
