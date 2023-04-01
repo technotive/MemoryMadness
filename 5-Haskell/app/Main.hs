@@ -52,9 +52,3 @@ processRequest request
           text = takeWhile isAlpha req'
           size = takeWhile isDigit $ dropWhile (not . isDigit) req'
           req' = UTF8.toString request
-
-decideNextAction :: Bytes.ByteString -> (Socket -> IO ())
-decideNextAction request
-    | byteCount > 0 = communicate
-    | otherwise     = close
-    where byteCount = Bytes.length request
