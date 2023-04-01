@@ -17,8 +17,6 @@
 #define ANSI_COLOR_BLUE    "\x1b[34m"
 #define ANSI_COLOR_RESET   "\x1b[0m"
 
-#define BIND_FAIL 1001
-
 void split(unsigned char* source, int s_size, char split_at, unsigned char* left, unsigned char* right);
 void logConnected(int handler);
 void logDisconnected(int handler);
