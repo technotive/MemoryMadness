@@ -7,7 +7,7 @@ main.o: main.c
 memory: helper.o main.o
 	gcc helper.o main.o -o memory 
 
-run: clean memory
+run: memory
 	./memory
 
 clean:

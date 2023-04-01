@@ -14,6 +14,7 @@ void log_connected(int handler) {
     printf(ANSI_COLOR_GREEN);
     printf("Client %s connected\n", client_addr);
     printf(ANSI_COLOR_RESET);
+    fflush(stdout);
 }
 void log_disconnected(int handler) {
     unsigned char client_addr[16] = {0};
@@ -21,12 +22,14 @@ void log_disconnected(int handler) {
     printf(ANSI_COLOR_RED);
     printf("Client %s disconnected\n", client_addr);
     printf(ANSI_COLOR_RESET);
+    fflush(stdout);
 }
 void log_request(unsigned char* buffer, int length) {
     printf(ANSI_COLOR_BLUE);
     printf("Received %d raw bytes\n", length);
     printf(ANSI_COLOR_RESET);
     printf("%s", buffer);
+    fflush(stdout);
 }
 
 void split(unsigned char* source, int s_size, char split_at, unsigned char* left, unsigned char* right) {

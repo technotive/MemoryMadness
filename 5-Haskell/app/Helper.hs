@@ -12,6 +12,7 @@ module Helper(inAddrAny, logConnected, logDisconnected, logRequest) where
 
 import qualified Data.ByteString as Bytes
 import Network.Socket
+import System.IO (stdout, hFlush)
 
 inAddrAny :: HostAddress
 inAddrAny = tupleToHostAddress (0, 0, 0, 0)
@@ -24,6 +25,7 @@ logConnected info = do
     setGreenColor
     putStrLn $ "Client " ++ Helper.clientIp info ++ " connected"
     resetColor
+    hFlush stdout
     where setGreenColor = putStr "\x1b[32m"
 
 logDisconnected :: SockAddr -> IO ()
@@ -31,6 +33,7 @@ logDisconnected info = do
     setRedColor
     putStrLn $ "Client " ++ Helper.clientIp info ++ " disconnected"
     resetColor
+    hFlush stdout
     where setRedColor = putStr "\x1b[31m"
 
 logRequest :: Bytes.ByteString -> IO ()
@@ -40,6 +43,7 @@ logRequest request
         putStrLn $ "Received " ++ show byteCount ++ " bytes"
         resetColor
         print request
+        hFlush stdout
     | otherwise     = return ()
     where byteCount    = Bytes.length request
           setBlueColor = putStr "\x1b[34m"
