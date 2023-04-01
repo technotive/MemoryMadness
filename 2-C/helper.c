@@ -29,7 +29,7 @@ void logRequest(unsigned char* buffer, int length) {
     printf("%s", buffer);
 }
 
-void split(unsigned char* source, int s_size, unsigned char* left, unsigned char* right) {
+void split(unsigned char* source, int s_size, char split_at, unsigned char* left, unsigned char* right) {
     int location = 0;
     int ending = 0;
     for(int i = 0; i < s_size; i++) {
@@ -37,7 +37,7 @@ void split(unsigned char* source, int s_size, unsigned char* left, unsigned char
             ending = i;
             break;
         } 
-        if(source[i] == ':') { location = i; } // If we found where to split, note that number down.
+        if(source[i] == split_at) { location = i; } // If we found where to split, note that number down.
     }
     memcpy(left, source, location);
     unsigned char* next = source+location+1;

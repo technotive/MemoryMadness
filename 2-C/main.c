@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <stdbool.h>
+#include <string.h>
 
 int processRequest(uint8_t* buffer, int length, uint8_t* output);
 
@@ -22,13 +23,10 @@ int main() {
     endpoint.sin_port = htons(PORT);
     int endpoint_size = sizeof(endpoint);
 
-    int listener       = socket(AF_INET, SOCK_STREAM, 0); // Options roughly mean: IPv4 TCP/IP
-    int binding_result = bind(listener, (struct sockaddr*)&endpoint, endpoint_size);
+    int listener  = socket(AF_INET, SOCK_STREAM, 0); // Options roughly mean: IPv4 TCP/IP
+    int _l_result = bind(listener, (struct sockaddr*)&endpoint, endpoint_size);
 
-    // Ideally you would check if binding worked. C# would throw an exception. C gives you a return code.
-    if(binding_result < 0) { printf("Could not bind listener to port %d\n", PORT); exit(BIND_FAIL); }
-
-    int listening_result = listen(listener, MAX_CONNECTIONS_PENDING);
+    int _b_result = listen(listener, MAX_CONNECTIONS_PENDING);
     printf("Listening on port %d on any interface.\n", PORT);
 
     bool listening = true;
@@ -38,7 +36,7 @@ int main() {
 
         bool connected = true;
         while(connected) {
-            uint8_t buffer[256];
+            uint8_t buffer[256]; // Volatile
             int byte_count = read(handler, buffer, 256);
             
             if(byte_count > 0) {
@@ -54,15 +52,16 @@ int main() {
         logDisconnected(handler);
         close(handler);
     }
-    shutdown(listener, SHUT_RDWR); // Done automatically in C# by the using directive and the destructor.
+    shutdown(listener, SHUT_RDWR); // Done automatically in C# by the using directive.
     return 0;
 }
 
  int processRequest(uint8_t* buffer, int length, uint8_t* output) {
     uint8_t contents_0[256];
     uint8_t contents_1[256];
-    split(buffer, length, (uint8_t*) contents_0, (uint8_t*) contents_1);
+    split(buffer, length, ':', (uint8_t*) contents_0, (uint8_t*) contents_1);
     int size = atoi(contents_1);
-    contents_0[size] = '\n';
+    memcpy(output, contents_0, size);
+    output[size] = '\n';
     return size+1;
 }

@@ -19,7 +19,7 @@
 
 #define BIND_FAIL 1001
 
-void split(unsigned char* source, int s_size, unsigned char* left, unsigned char* right);
+void split(unsigned char* source, int s_size, char split_at, unsigned char* left, unsigned char* right);
 void logConnected(int handler);
 void logDisconnected(int handler);
 void logRequest(unsigned char* buffer, int length);
