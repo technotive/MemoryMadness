@@ -4,7 +4,7 @@ This is an example project to demonstrate things that can go wrong with memory m
 WARNING: The code within this repository is purposefully written in a sloppy way and should never be used in any production system.
 
 # Toolchain
-**OS: Debian 10 - WSL2**
+**OS: Debian 11 - WSL2**
 - C#
   - dotnet SDK: 7.0.201
 - C
