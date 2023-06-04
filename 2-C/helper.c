@@ -28,7 +28,7 @@ void log_request(unsigned char* buffer, int length) {
     printf(ANSI_COLOR_BLUE);
     printf("Received %d raw bytes\n", length);
     printf(ANSI_COLOR_RESET);
-    printf("%s", buffer);
+    printf("%s", buffer); // Does not check length
     fflush(stdout);
 }
 

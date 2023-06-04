@@ -64,7 +64,7 @@ int process_request(uint8_t* buffer, int length, uint8_t* output) {
     uint8_t contents_1[256];
     split(buffer, length, ':', (uint8_t*) contents_0, (uint8_t*) contents_1);
     int size = atoi(contents_1);
-    memcpy(output, contents_0, size);
+    memcpy(output, contents_0, size); // Again, no length check enforced whatsoever.
     output[size] = '\n';
     return size+1;
 }
